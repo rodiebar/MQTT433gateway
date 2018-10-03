@@ -5,6 +5,7 @@
 Project home: https://github.com/puuu/MQTT433gateway/
 """
 
+import sys
 from textwrap import wrap
 
 TEMPLATE = """
@@ -17,12 +18,20 @@ const char PROGMEM {var_name}[] = {{
 }};
 """
 
+if sys.version_info < (3,):
+    def _conv(x):
+        return ord(x)
+else:
+    def _conv(x):
+        return x
+
+
 def dump(infile_name, outfile_name, var_name=None):
     with open(infile_name, "rb") as infile:
         if var_name is None:
             var_name = infile_name.replace('/', '_').replace('\\', '_').replace('.', '_')
         contents = infile.read()
-        hexdump = ", ".join(['0x{:02x}'.format(ch) for ch in contents])
+        hexdump = ", ".join(['0x{:02x}'.format(_conv(ch)) for ch in contents])
         formatted = "\n  ".join(wrap(hexdump, 72))
         with open(outfile_name, "w") as outfile:
             outfile.write(TEMPLATE.format(var_name=var_name,
@@ -32,7 +41,6 @@ def dump(infile_name, outfile_name, var_name=None):
 
 
 def main():
-    import sys
     infile = sys.argv[1]
     outfile = sys.argv[2]
     dump(infile, outfile)
