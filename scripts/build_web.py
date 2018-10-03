@@ -26,8 +26,8 @@ def build_web():
         return
     os.chdir("web")
     print("Attempting to build webpage...")
-    check_call(["npm", "install"])
-    dump("build/index.html.gz", "../dist/index.html.gz.h", "index_html_gz")
+    check_call(["npm", "run", "build"])
+    dump("dist/index.html.gz", "../dist/index.html.gz.h", "index_html_gz")
     os.chdir("..")
 
 
